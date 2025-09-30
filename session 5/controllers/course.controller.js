@@ -1,19 +1,19 @@
-import Course from "../models/course.model.js"
+import Course from "../models/course.model.js";
 
 export const fetchAllCoursers = async (req, res) => {
-  const courses = await Course.find()
-  res.send(courses)
-}
+  const courses = await Course.find();
+  res.send(courses);
+};
 
-export const fetchSingleCourse = async (req,res) => {
-  const course = await Course.findById(req.params.courseId)
+export const fetchSingleCourse = async (req, res) => {
+  const course = await Course.findById(req.params.courseId);
 
   if (course) {
-    res.json(course)
+    res.json(course);
   } else {
-    res.status(200).send("Course not found")
+    res.status(200).send("Course not found");
   }
-}
+};
 
 export const addNewCourse = async (req, res) => {
   try {
@@ -22,40 +22,38 @@ export const addNewCourse = async (req, res) => {
     await newCourse.save();
     res.status(201).json({
       message: "Course added successfully",
-      course: newCourse
+      course: newCourse,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
+export const updateCourse = async (req, res) => {
+  const id = req.params.courseId;
+  try {
+    const updatedCourse = await Course.findByIdAndUpdate(
+      id,
+      { ...req.body },
+      { returnDocument: "after" } // I add this to get the updated document not past one
+    );
+    console.log("updated: ", updatedCourse);
+    res.status(200).send(updatedCourse);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
 
+export const deleteCourse = async (req, res) => {
+  const id = req.params.courseId;
 
-// export const updateCourse = (req,res) => {
-//   const courseId = +req.params.courseId
-//   let course = courses.find((course) => course.id === courseId)
-  
-//   if (course) {
-//     Object.assign(course, req.body);
-//     res.json({
-//       message: "Course updated successfully",
-//       courses: courses
-//     })
-//   } else {
-//     res.status(404).send("Course not found")
-//   }
-// }
-
-// export const deleteCourse = (req,res) => {
-//   const courseId = +req.params.courseId
-//   const course = courses.find((course) => course.id === courseId)
-//   if(course) {
-//     courses.splice(courses.indexOf(course),1)
-//     res.json({
-//       message: "Course deleted successfully",
-//       course: course
-//     })
-//   } else {
-//     res.status(404).send("Couldn't delete the course")
-//   }
-// }
+  try {
+    const deletedCourse = await Course.findByIdAndDelete(id);
+    res.status(200).json({
+      message: "Course deleted successfully",
+      course: deletedCourse,
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};

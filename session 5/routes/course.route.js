@@ -1,7 +1,5 @@
 import express from 'express'
-// import { addNewCourse, deleteCourse, fetchAllCoursers, fetchSingleCourse, updateCourse } from '../controllers/course.controller.js'
-import { addNewCourse, fetchAllCoursers, fetchSingleCourse } from '../controllers/course.controller.js'
-import { newCourseSchema, validate } from '../schemes/courseSchema.js'
+import { addNewCourse, deleteCourse, fetchAllCoursers, fetchSingleCourse, updateCourse } from '../controllers/course.controller.js'
 
 const Router = express.Router()
 
@@ -12,8 +10,8 @@ Router.route('/')
 
 Router.route('/:courseId')
       .get(fetchSingleCourse)
-//       .patch(updateCourse)
-//       .delete(deleteCourse)
+      .patch(updateCourse)
+      .delete(deleteCourse)
 
 
 export default Router
