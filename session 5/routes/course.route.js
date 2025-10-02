@@ -1,11 +1,12 @@
 import express from 'express'
 import { addNewCourse, deleteCourse, fetchAllCoursers, fetchSingleCourse, updateCourse } from '../controllers/course.controller.js'
+import { newCourseSchema, validate } from '../schemes/courseSchema.js'
 
 const Router = express.Router()
 
 Router.route('/')
       .get(fetchAllCoursers)
-      .post(addNewCourse)
+      .post( validate(newCourseSchema), addNewCourse)
 
 
 Router.route('/:courseId')
