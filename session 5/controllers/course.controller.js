@@ -3,9 +3,13 @@ import { httpStatusText } from "../utils/httpStatusText.js";
 import { asyncWrapper } from "../middleware/asyncWrapper.js";
 import appError from "../utils/appError.js";
 
-export const fetchAllCoursers = asyncWrapper(async (req, res) => {
+export const fetchAllCoursers = asyncWrapper(async (req, res, next) => {
   const courses = await Course.find({}, { __v: false });
-  res.status(200).json({ status: httpStatusText.Success, data: courses });
+  if(courses.length > 0) {
+    return res.status(200).json({ status: httpStatusText.Success, data: courses });
+  } else {
+    return next(appError.create("Course not found", 404, httpStatusText.Fail))
+  }
 })
 
 export const fetchSingleCourse = asyncWrapper(async (req, res, next) => {
@@ -18,6 +22,7 @@ export const fetchSingleCourse = asyncWrapper(async (req, res, next) => {
   }
 });
 
+// I handled the error in the middleware using validate(courseSchema)
 export const addNewCourse = asyncWrapper(async (req, res, next) => {
 
   const newCourse = new Course(req.body);
@@ -36,21 +41,19 @@ export const updateCourse = asyncWrapper(async (req, res) => {
       { ...req.body },
       { returnDocument: "after" } // I add this to get the updated document not past one
     );
-    
-    res.status(200).send(updatedCourse);
+
+    res.status(200).json({
+      status: httpStatusText.Success,
+      data: updatedCourse,
+    });
 
 })
 
-export const deleteCourse = async (req, res) => {
+export const deleteCourse = asyncWrapper(async (req, res) => {
   const id = req.params.courseId;
-
-  try {
-    const deletedCourse = await Course.findByIdAndDelete(id);
-    res.status(200).json({
-      message: "Course deleted successfully",
-      course: deletedCourse,
-    });
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  const deletedCourse = await Course.findByIdAndDelete(id);
+  res.status(200).json({
+    status: httpStatusText.Success,
+    data: deletedCourse
+  })
+})

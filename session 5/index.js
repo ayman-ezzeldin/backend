@@ -5,18 +5,18 @@ import cors from 'cors'
 import dotenv from "dotenv";
 import { httpStatusText } from "./utils/httpStatusText.js";
 
+dotenv.config();
 const app = express();
 const port = 3000;
 
 
-dotenv.config();
-app.use(cors())
-app.use(express.json());
+app.use(cors()) // provide cors for all routes
+app.use(express.json()); // to parse JSON bodies (that send from client)
 
 
 app.use("/api/courses", courseRouter);
 
-// Global Routes error handler
+// Global Routes error handler (in case of the route doesn't exist)
 app.use((req, res) => {
   return res.status(404).json({ status: httpStatusText.Error, message: "Endpoint doesn't exist" });
 })
@@ -27,7 +27,7 @@ app.use((err, req, res, next) => {
 })
 
 
-app.listen(port, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
 });
 
