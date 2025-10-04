@@ -1,5 +1,6 @@
 import express from "express";
 import courseRouter from "./routes/course.route.js";
+import userRouter from './routes/user.route.js'
 import mongoose from "mongoose";
 import cors from 'cors'
 import dotenv from "dotenv";
@@ -15,6 +16,7 @@ app.use(express.json()); // to parse JSON bodies (that send from client)
 
 
 app.use("/api/courses", courseRouter);
+app.use("/api/users", userRouter);
 
 // Global Routes error handler (in case of the route doesn't exist)
 app.use((req, res) => {
