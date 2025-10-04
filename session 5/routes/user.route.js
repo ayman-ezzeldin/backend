@@ -1,5 +1,5 @@
 import express from 'express'
-import { fetchAllUsers, registerUser } from '../controllers/user.controller.js'
+import { deleteUser, fetchAllUsers, loginUser, registerUser } from '../controllers/user.controller.js'
 
 const Router = express.Router()
 
@@ -8,5 +8,11 @@ Router.route('/')
 
 Router.route('/register')
       .post(registerUser)
+
+Router.route('/login')
+      .post(loginUser)
+
+Router.route('/delete/:userId')
+      .delete(deleteUser)
 
 export default Router
