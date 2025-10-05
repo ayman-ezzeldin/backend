@@ -17,16 +17,16 @@ export const fetchAllUsers = asyncWrapper(async (req, res, next) => {
 
 export const registerUser = asyncWrapper(async (req, res, next) => {
   
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, role } = req.body;
   const oldUser = await User.findOne({ email });
   if (oldUser) {
     return next(appError.create("User already exists", 400, httpStatusText.Fail));
   }
 
   const hasedPassword = await bcrypt.hash(password, 10);
-  const newUser = new User({ firstName, lastName, email, password: hasedPassword });
+  const newUser = new User({ firstName, lastName, email, password: hasedPassword, role });
 
-  const token = generateToken({ id: newUser._id, email: newUser.email });
+  const token = generateToken({ id: newUser._id, email: newUser.email, role: newUser.role });
   newUser.token = token
 
   await newUser.save();
@@ -51,9 +51,9 @@ export const loginUser = asyncWrapper(async(req, res, next) => {
     return next(appError.create("Invalid password", 401, httpStatusText.Fail));
   }
 
-  const token = generateToken({ id: user._id, email: user.email });
+  const token = generateToken({ id: user._id, email: user.email, role: user.role });
 
-  res.status(200).json({ status: httpStatusText.Success, data: token, message: "User loggenin" });
+  res.status(200).json({ status: httpStatusText.Success, data: {token: token}, role: user.role, message: "User loggenin" });
 })
 
 export const deleteUser = asyncWrapper(async (req, res, next) => {
