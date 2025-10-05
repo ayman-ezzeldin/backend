@@ -1,10 +1,11 @@
 import express from 'express'
 import { deleteUser, fetchAllUsers, loginUser, registerUser } from '../controllers/user.controller.js'
+import { verifiyToken } from '../middleware/verifiyToken.js'
 
 const Router = express.Router()
 
 Router.route('/')
-      .get(fetchAllUsers)
+      .get(verifiyToken,fetchAllUsers)
 
 Router.route('/register')
       .post(registerUser)

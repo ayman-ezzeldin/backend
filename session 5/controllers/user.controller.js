@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import appError from "../utils/appError.js";
 import { httpStatusText } from "../utils/httpStatusText.js";
 import bcrypt from "bcrypt"
+import { generateToken } from "../utils/generateToken.js";
 
 export const fetchAllUsers = asyncWrapper(async (req, res, next) => {
   const query = req.query;
@@ -24,6 +25,10 @@ export const registerUser = asyncWrapper(async (req, res, next) => {
 
   const hasedPassword = await bcrypt.hash(password, 10);
   const newUser = new User({ firstName, lastName, email, password: hasedPassword });
+
+  const token = generateToken({ id: newUser._id, email: newUser.email });
+  newUser.token = token
+
   await newUser.save();
 
   const userData = newUser.toObject();
@@ -46,7 +51,9 @@ export const loginUser = asyncWrapper(async(req, res, next) => {
     return next(appError.create("Invalid password", 401, httpStatusText.Fail));
   }
 
-  res.status(200).json({ status: httpStatusText.Success, data: user, message: "User loggenin" });
+  const token = generateToken({ id: user._id, email: user.email });
+
+  res.status(200).json({ status: httpStatusText.Success, data: token, message: "User loggenin" });
 })
 
 export const deleteUser = asyncWrapper(async (req, res, next) => {

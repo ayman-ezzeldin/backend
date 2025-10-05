@@ -11,7 +11,7 @@ const app = express();
 const port = 3000;
 
 
-app.use(cors()) // provide cors for all routes
+app.use(cors()) // provide now cors for all routes
 app.use(express.json()); // to parse JSON bodies (that send from client)
 
 
