@@ -24,7 +24,7 @@ export const registerUser = asyncWrapper(async (req, res, next) => {
   }
 
   const hasedPassword = await bcrypt.hash(password, 10);
-  const newUser = new User({ firstName, lastName, email, password: hasedPassword, role });
+  const newUser = new User({ firstName, lastName, email, password: hasedPassword, role, avatar: req.file.filename });
 
   const token = generateToken({ id: newUser._id, email: newUser.email, role: newUser.role });
   newUser.token = token

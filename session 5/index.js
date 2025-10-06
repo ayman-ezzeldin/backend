@@ -1,10 +1,15 @@
+import mongoose from "mongoose";
 import express from "express";
 import courseRouter from "./routes/course.route.js";
 import userRouter from './routes/user.route.js'
-import mongoose from "mongoose";
 import cors from 'cors'
 import dotenv from "dotenv";
 import { httpStatusText } from "./utils/httpStatusText.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 const app = express();
@@ -17,6 +22,7 @@ app.use(express.json()); // to parse JSON bodies (that send from client)
 
 app.use("/api/courses", courseRouter);
 app.use("/api/users", userRouter);
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads'))) // provide static path for uploaded files
 
 // Global Routes error handler (in case of the route doesn't exist)
 app.use((req, res) => {
@@ -32,8 +38,6 @@ app.use((err, req, res, next) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Example app listening on port http://localhost:${port}`);
 });
-
-
 
 
 mongoose
