@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import express from "express";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger.js";
 import courseRouter from "./routes/course.route.js";
 import userRouter from './routes/user.route.js'
 import cors from 'cors'
@@ -19,6 +21,7 @@ const port = 3000;
 app.use(cors()) // provide now cors for all routes
 app.use(express.json()); // to parse JSON bodies (that send from client)
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/api/courses", courseRouter);
 app.use("/api/users", userRouter);
